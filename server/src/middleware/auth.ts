@@ -11,11 +11,9 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     return res.status(401).json({ message: "No token provided" });
   }
   try {
-    const decoded = jwt.verify(
-      header.split(" ")[1],
-      process.env.ACCESS_TOKEN_SECRET!
-    ) as { id: string; role: string };
-    req.user = decoded;
+    const token = header.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as { id: string; role: string } | string;
+    req.user = typeof decoded === "object" && decoded ? decoded : { id: decoded as string, role: "user" };
     next();
   } catch {
     return res.status(401).json({ message: "Invalid or expired token" });
@@ -24,7 +22,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
 export const authorize =
   (...roles: string[]) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user!.role)) {
       return res.status(403).json({ message: "Forbidden" });
     }
