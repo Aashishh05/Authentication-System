@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { JwtPayload } from "../utils/tokens";
 
 export interface AuthRequest extends Request {
-  user?: JwtPayload & { role: string };
+  user?: { id: string; role: string };
 }
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
@@ -12,7 +11,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     return res.status(401).json({ message: "No token provided" });
   }
   try {
-    const decoded = jwt.verify(header.split(" ")[1], process.env.ACCESS_TOKEN_SECRET!) as JwtPayload;
+    const decoded = jwt.verify(
+      header.split(" ")[1],
+      process.env.ACCESS_TOKEN_SECRET!
+    ) as { id: string; role: string };
     req.user = decoded;
     next();
   } catch {
