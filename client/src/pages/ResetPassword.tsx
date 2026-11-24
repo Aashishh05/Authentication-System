@@ -9,10 +9,16 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // If no token in URL, redirect to login
+  if (!token) {
+    navigate("/login");
+    return null;
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await resetPasswordRequest(token!, password);
+      await resetPasswordRequest(token, password);
       navigate("/login");
     } catch (err) {
       setError(isAxiosError(err) ? err.response?.data?.message ?? "Reset failed" : "Reset failed");
