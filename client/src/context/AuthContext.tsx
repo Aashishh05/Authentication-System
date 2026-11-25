@@ -1,6 +1,6 @@
-import { createContext, useCallback, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { setAccessToken } from "../api/axios";
-import { loginRequest, refreshRequest, logoutRequest } from "../api/auth.api";
+import { loginRequest, registerRequest, refreshRequest, logoutRequest } from "../api/auth.api";
 import type { AuthContextType, LoginPayload, RegisterPayload, Role, User } from "../types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

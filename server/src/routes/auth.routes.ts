@@ -3,8 +3,17 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../models/User";
 import { authenticate } from "../middleware/auth";
+import { validate } from "../middleware/validate";
 import * as c from "../controllers/auth.controller";
 import { signRefreshToken, hashToken, setRefreshCookie } from "../utils/tokens";
+import {
+  registerSchema,
+  loginSchema,
+  changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  verifyEmailSchema,
+} from "../utils/validate";
 
 passport.use(
   new GoogleStrategy(
@@ -39,16 +48,16 @@ passport.use(
 
 const router = Router();
 
-router.post("/register", c.register);
-router.post("/login", c.login);
+router.post("/register", validate(registerSchema), c.register);
+router.post("/login", validate(loginSchema), c.login);
 router.post("/refresh", c.refresh);
 router.post("/logout", c.logout);
 router.post("/logout-all", authenticate, c.logoutAll);
 router.get("/me", authenticate, c.me);
-router.get("/verify-email/:token", c.verifyEmail);
-router.post("/forgot-password", c.forgotPassword);
-router.post("/reset-password/:token", c.resetPassword);
-router.post("/change-password", authenticate, c.changePassword);
+router.get("/verify-email/:token", validate(verifyEmailSchema), c.verifyEmail);
+router.post("/forgot-password", validate(forgotPasswordSchema), c.forgotPassword);
+router.post("/reset-password/:token", validate(resetPasswordSchema), c.resetPassword);
+router.post("/change-password", authenticate, validate(changePasswordSchema), c.changePassword);
 
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"], session: false }));
 router.get(

@@ -1,23 +1,23 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { api } from "../api/axios";
 
 const AdminPanel = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const [users, setUsers] = useState<any[]>([]);
 
-  // This calls the admin-only endpoint /api/admin/users
-  // Protection is enforced by the backend authorize("middleware")
-  import { api } from "../api/axios";
+  useEffect(() => {
+    api.get("/admin/users")
+      .then((res) => setUsers(res.data.users))
+      .catch(console.error);
+  }, []);
 
-  const [users, setUsers] = useState<any[]>( []);
-
-  // Note: In a full app, you'd fetch this in useEffect on component mount
-  // For now, we'll just show the user info
   return (
     <div>
       <h1>Admin Panel</h1>
       <p>Welcome, {user?.name} (Admin)</p>
       <p>Role: {user?.role}</p>
-      <button onClick={() => logout()}>Logout</button>
+      <button onClick={logout}>Logout</button>
 
       <h2>Users</h2>
       <pre>{JSON.stringify(users, null, 2)}</pre>
