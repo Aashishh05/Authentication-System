@@ -5,7 +5,7 @@ import User from "../models/User";
 import { authenticate } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import * as c from "../controllers/auth.controller";
-import { signRefreshToken, hashToken, setRefreshCookie } from "../utils/tokens";
+import { signRefreshToken, hashToken } from "../utils/tokens";
 import {
   registerSchema,
   loginSchema,

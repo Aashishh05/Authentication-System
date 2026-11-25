@@ -7,7 +7,7 @@ import passport from "passport";
 import helmet from "helmet";
 import authRoutes from "./routes/auth.routes";
 import { authenticate, authorize } from "./middleware/auth";
-import { authLimiter, loginLimiter, forgotPasswordLimiter } from "./middleware/rateLimit";
+import { loginLimiter, forgotPasswordLimiter } from "./middleware/rateLimit";
 import User from "./models/User";
 
 const app = express();
