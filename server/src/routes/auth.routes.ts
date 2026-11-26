@@ -94,14 +94,15 @@ router.get(
       }
       // Use googleAuth service to issue tokens and set refresh cookie
       // Pass Google profile-like object with googleId for the service to find the user
-      const { accessToken } = await googleAuth({
+      await googleAuth({
         id: user.googleId,
         emails: [{ value: user.email }],
         displayName: user.name,
         photos: user.avatar ? [{ value: user.avatar }] : [],
       }, res);
-      // Redirect to frontend with access token
-      res.redirect(`${config.clientUrl}/oauth/callback?token=${accessToken}`);
+      // Redirect to frontend without access token in URL (security: token in httpOnly cookie)
+      // Frontend should call /api/auth/refresh to get access token via refresh cookie
+      res.redirect(`${config.clientUrl}/oauth/callback`);
     } catch (err) {
       next(err);
     }
