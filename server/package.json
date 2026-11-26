@@ -40,6 +40,6 @@
     "@types/passport-google-oauth20": "^2.0.17",
     "oxlint": "^1.95.0",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^7.0.2"
+    "typescript": "^5.9.3"
   }
 }
