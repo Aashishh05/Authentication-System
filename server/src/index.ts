@@ -5,9 +5,12 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import helmet from "helmet";
+import { config } from "./config";
 import authRoutes from "./routes/auth.routes";
 import { authenticate, authorize } from "./middleware/auth";
-import { loginLimiter, forgotPasswordLimiter } from "./middleware/rateLimit";
+import { authLimiter, loginLimiter, forgotPasswordLimiter } from "./middleware/rateLimit";
+import { AppError } from "./errors";
+import { ERROR_MESSAGES, HTTP_STATUS } from "./constants";
 import User from "./models/User";
 
 const app = express();
@@ -16,7 +19,7 @@ const app = express();
 app.use(helmet());
 
 // CORS with credentials
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: config.clientUrl, credentials: true }));
 
 // Parse JSON bodies
 app.use(express.json());
@@ -28,9 +31,9 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 // Rate limiting
+app.use("/api/auth", authLimiter);
 app.use("/api/auth/login", loginLimiter);
 app.use("/api/auth/forgot-password", forgotPasswordLimiter);
-// General auth routes without specific limiter (register, refresh, etc. have their own logic)
 
 // Mount auth routes
 app.use("/api/auth", authRoutes);
@@ -39,24 +42,32 @@ app.use("/api/auth", authRoutes);
 app.get("/api/admin/users",
   authenticate,
   authorize("admin"),
-  async (_req, res) => {
+  async (req, res) => {
     res.json({ users: await User.find().select("name email role isVerified") });
   }
 );
 
 // Unknown route handler
 app.use((_req, res) => {
-  res.status(404).json({ message: "Route not found" });
+  res.status(HTTP_STATUS.NOT_FOUND).json({ message: ERROR_MESSAGES.ROUTE_NOT_FOUND });
 });
 
 // Global error handler
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error("Error handler:", err.message);
-  res.status(500).json({ message: "Internal server error" });
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+      errors: err.errors,
+    });
+  }
+  console.error("Error handler:", err);
+  return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+    message: ERROR_MESSAGES.INTERNAL_ERROR,
+  });
 });
 
-mongoose.connect(process.env.MONGO_URI!).then(() => {
-  app.listen(parseInt(process.env.PORT || "5000"), () => console.log(`Server running on ${process.env.PORT || 5000}`));
+mongoose.connect(config.mongoUri).then(() => {
+  app.listen(config.port, () => console.log(`Server running on ${config.port}`));
 }).catch(err => {
   console.error("MongoDB connection error:", err);
   process.exit(1);

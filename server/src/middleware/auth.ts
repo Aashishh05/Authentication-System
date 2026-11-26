@@ -1,30 +1,30 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { verifyAccessToken } from "../services/token.service";
+import { UnauthorizedError, ForbiddenError } from "../errors";
+import { JwtPayload } from "../types";
 
-export interface AuthRequest extends Request {
-  user?: { id: string; role: string };
-}
+export type AuthRequest = Request & { user?: JwtPayload };
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+    throw new UnauthorizedError("No token provided");
   }
   try {
     const token = header.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as { id: string; role: string } | string;
-    req.user = typeof decoded === "object" && decoded ? decoded : { id: decoded as string, role: "user" };
+    const decoded = verifyAccessToken(token);
+    req.user = decoded;
     next();
   } catch {
-    return res.status(401).json({ message: "Invalid or expired token" });
+    throw new UnauthorizedError("Invalid or expired token");
   }
 };
 
 export const authorize =
   (...roles: string[]) =>
   (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user || !roles.includes(req.user!.role)) {
-      return res.status(403).json({ message: "Forbidden" });
+    if (!req.user || !roles.includes(req.user.role)) {
+      throw new ForbiddenError("Forbidden");
     }
     next();
   };
