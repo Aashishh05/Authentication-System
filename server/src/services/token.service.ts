@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { Response } from "express";
+import express from "express";
 import { config } from "../config";
 import { JwtPayload, TokenPair } from "../types";
 
@@ -24,7 +24,7 @@ export const generateTokenPair = (payload: JwtPayload): TokenPair => ({
   refreshToken: signRefreshToken(payload),
 });
 
-export const setRefreshCookie = (res: Response, token: string): void => {
+export const setRefreshCookie = (res: express.Response, token: string): void => {
   res.cookie(config.cookie.name, token, {
     httpOnly: config.cookie.httpOnly,
     secure: config.cookie.secure,
@@ -34,7 +34,7 @@ export const setRefreshCookie = (res: Response, token: string): void => {
   });
 };
 
-export const clearRefreshCookie = (res: Response): void => {
+export const clearRefreshCookie = (res: express.Response): void => {
   res.clearCookie(config.cookie.name, { path: config.cookie.path });
 };
 

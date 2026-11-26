@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import express from "express";
 import User, { IUser } from "../models/User";
 import {
   signAccessToken,
@@ -32,7 +33,7 @@ const publicUser = (user: IUser): UserPublic => ({
   avatar: user.avatar,
 });
 
-const issueTokens = async (user: IUser, res: Response): Promise<string> => {
+const issueTokens = async (user: IUser, res: express.Response): Promise<string> => {
   const payload: JwtPayload = { id: user._id.toString(), role: user.role };
   const accessToken = signAccessToken(payload);
   const refreshToken = signRefreshToken(payload);
@@ -75,7 +76,7 @@ export const register = async (
 export const login = async (
   email: string,
   password: string,
-  res: Response
+  res: express.Response
 ): Promise<{ accessToken: string; user: UserPublic }> => {
   const user = await User.findOne({ email }).select("+password");
   if (!user || !user.password || !(await bcrypt.compare(password, user.password))) {
@@ -88,7 +89,7 @@ export const login = async (
 
 export const refresh = async (
   token: string | undefined,
-  res: Response
+  res: express.Response
 ): Promise<{ accessToken: string; user: UserPublic }> => {
   if (!token) {
     throw new UnauthorizedError("No refresh token");
@@ -118,7 +119,7 @@ export const refresh = async (
   }
 };
 
-export const logout = async (token: string | undefined, res: Response): Promise<{ message: string }> => {
+export const logout = async (token: string | undefined, res: express.Response): Promise<{ message: string }> => {
   if (token) {
     try {
       const { id } = verifyRefreshToken(token);
@@ -131,7 +132,7 @@ export const logout = async (token: string | undefined, res: Response): Promise<
   return { message: "Logged out" };
 };
 
-export const logoutAll = async (userId: string, res: Response): Promise<{ message: string }> => {
+export const logoutAll = async (userId: string, res: express.Response): Promise<{ message: string }> => {
   await User.updateOne({ _id: userId }, { $set: { refreshTokens: [] } });
   clearRefreshCookie(res);
   return { message: "Logged out from all devices" };
@@ -161,7 +162,7 @@ export const forgotPassword = async (email: string): Promise<{ message: string }
   if (user) {
     const raw = crypto.randomBytes(32).toString("hex");
     user.resetToken = hashToken(raw);
-    user.resetTokenExpires = new Date(Date.now() + config.tokenHashAlgorithm === "sha256" ? 15 * 60 * 1000 : 15 * 60 * 1000);
+    user.resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save();
     await sendPasswordResetEmail(user.email, raw);
   }
@@ -217,7 +218,7 @@ export const changePassword = async (
 
 export const googleAuth = async (
   profile: any,
-  res: Response
+  res: express.Response
 ): Promise<{ accessToken: string; user: UserPublic }> => {
   let user = await User.findOne({ googleId: profile.id });
 
@@ -245,5 +246,3 @@ export const googleAuth = async (
   const accessToken = await issueTokens(user, res);
   return { accessToken, user: publicUser(user) };
 };
-
-import { Response } from "express";

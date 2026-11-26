@@ -6,6 +6,7 @@ import User from "../models/User";
 import { authenticate } from "../middleware/auth";
 import { validate } from "../middleware/validate";
 import * as ctrl from "../controllers/auth.controller";
+import { googleAuth } from "../services/auth.service";
 import {
   registerSchema,
   loginSchema,
@@ -84,12 +85,26 @@ router.get("/google", passport.authenticate("google", { scope: ["profile", "emai
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false, failureRedirect: `${config.clientUrl}/login?error=oauth` }),
-  async (req: any, res) => {
-    // Convert full User document to JwtPayload for consistency
-    if (req.user && req.user._id && req.user.role) {
-      req.user = { id: req.user._id.toString(), role: req.user.role };
+  async (req: any, res, next) => {
+    try {
+      // req.user is the full User document from Passport strategy
+      const user = req.user;
+      if (!user || !user._id || !user.role || !user.googleId) {
+        return res.redirect(`${config.clientUrl}/login?error=oauth`);
+      }
+      // Use googleAuth service to issue tokens and set refresh cookie
+      // Pass Google profile-like object with googleId for the service to find the user
+      const { accessToken } = await googleAuth({
+        id: user.googleId,
+        emails: [{ value: user.email }],
+        displayName: user.name,
+        photos: user.avatar ? [{ value: user.avatar }] : [],
+      }, res);
+      // Redirect to frontend with access token
+      res.redirect(`${config.clientUrl}/oauth/callback?token=${accessToken}`);
+    } catch (err) {
+      next(err);
     }
-    res.redirect(`${config.clientUrl}/oauth/callback`);
   }
 );
 
