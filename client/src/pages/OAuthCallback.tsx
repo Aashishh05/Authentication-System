@@ -17,26 +17,37 @@ const OAuthCallback = () => {
   }, [isAuthenticated, isLoading, navigate]);
 
   return (
-    <div className="auth-layout animate-fade-in">
-      <div className="auth-card animate-slide-up">
-        <div className="auth-body text-center py-12">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-primary-light flex items-center justify-center">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
+    <>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      <div className="auth-bg-layer">
+        <div className="auth-bg-mesh"></div>
+        <div className="auth-bg-noise"></div>
+      </div>
+      <div className="auth-layout animate-fade-in">
+        <main id="main-content" className="w-full">
+          <div className="auth-card animate-slide-up">
+            <div className="auth-body text-center py-12">
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-primary-light flex items-center justify-center">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
+                  </svg>
+                </div>
+              </div>
+              <h1 className="auth-title gradient-text mb-2">Signing you in</h1>
+              <p className="auth-subtitle">Please wait while we complete the authentication</p>
+              <div className="flex justify-center mt-8">
+                <span className="spinner" style={{ width: "40px", height: "40px", borderWidth: "3px" }} aria-hidden="true"></span>
+                <span className="sr-only">Loading...</span>
+              </div>
             </div>
           </div>
-          <h1 className="auth-title mb-2">Signing you in</h1>
-          <p className="auth-subtitle">Please wait while we complete the authentication</p>
-          <div className="flex justify-center mt-8">
-            <span className="spinner" style={{ width: "40px", height: "40px", borderWidth: "3px" }} aria-hidden="true"></span>
-            <span className="sr-only">Loading...</span>
-          </div>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 };
 

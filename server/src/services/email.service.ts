@@ -1,8 +1,12 @@
 import nodemailer from "nodemailer";
 import { config } from "../config";
 
-const createTransporter = () =>
-  nodemailer.createTransport({
+const createTransporter = () => {
+  // Skip email in development if SMTP not configured
+  if (config.nodeEnv !== "production" && (!config.smtp.host || config.smtp.host === "smtp.example.com")) {
+    return null;
+  }
+  return nodemailer.createTransport({
     host: config.smtp.host,
     port: config.smtp.port,
     secure: config.smtp.secure,
@@ -11,6 +15,7 @@ const createTransporter = () =>
       pass: config.smtp.pass,
     },
   });
+};
 
 export const sendEmail = async (
   to: string,
@@ -19,6 +24,10 @@ export const sendEmail = async (
   html?: string
 ): Promise<void> => {
   const transporter = createTransporter();
+  if (!transporter) {
+    console.log(`[DEV] Email skipped - would send to ${to}: ${subject}`);
+    return;
+  }
   await transporter.sendMail({
     from: config.smtp.user,
     to,

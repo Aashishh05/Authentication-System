@@ -13,7 +13,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      <aside className="dashboard-sidebar" aria-label="Main navigation">
+      <aside className="dashboard-sidebar glass-bg-strong" aria-label="Main navigation">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -24,7 +24,7 @@ const Dashboard = () => {
         </div>
 
         <nav className="nav" aria-label="Dashboard">
-          <a href="/dashboard" className="nav-item active">
+          <a href="/dashboard" className="nav-item nav-item-hover nav-item-active active">
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
@@ -32,7 +32,7 @@ const Dashboard = () => {
             Dashboard
           </a>
           {hasRole("admin") && (
-            <a href="/admin" className="nav-item">
+            <a href="/admin" className="nav-item nav-item-hover">
               <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="6" x2="12" y2="18" />
@@ -42,7 +42,7 @@ const Dashboard = () => {
             </a>
           )}
           {hasRole("admin", "moderator") && (
-            <a href="#" className="nav-item">
+            <a href="#" className="nav-item nav-item-hover">
               <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
@@ -59,30 +59,29 @@ const Dashboard = () => {
             <p className="text-muted mt-1">Welcome back, {user?.name}</p>
           </div>
 
-          <div className="user-menu">
+          <div className="user-menu glass-bg-strong rounded-xl px-4 py-2">
             <div className="user-info">
               <span className="user-name">{user?.name}</span>
               <span className="user-role">{user?.role}</span>
             </div>
-            <div className="user-avatar" aria-hidden="true">
+            <div className="user-avatar glass-bg" aria-hidden="true">
               {initials}
             </div>
           </div>
         </header>
 
-        <div className="card mb-6">
-          <div className="card-body">
+        <div className="glass-card mb-6 p-6">
             <h2 className="text-xl font-semibold mb-4">Account Overview</h2>
 
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between p-4 bg-bg-elevated border border-border rounded-lg">
+              <div className="glass-bg p-4">
                 <div>
                   <p className="font-medium">Email</p>
                   <p className="text-sm text-muted">{user?.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-bg-elevated border border-border rounded-lg">
+              <div className="glass-bg p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium">Role</p>
                   <p className="text-sm text-muted text-capitalize">{user?.role}</p>
@@ -98,7 +97,7 @@ const Dashboard = () => {
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-bg-elevated border border-border rounded-lg">
+              <div className="glass-bg p-4 flex items-center justify-between">
                 <div>
                   <p className="font-medium">Email Verified</p>
                   <p className="text-sm text-muted">
@@ -112,11 +111,9 @@ const Dashboard = () => {
                 )}
               </div>
             </div>
-          </div>
         </div>
 
-        <div className="card">
-          <div className="card-body">
+        <div className="glass-card p-6">
             <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
 
             <div className="flex flex-wrap gap-3">
@@ -146,7 +143,6 @@ const Dashboard = () => {
                 Logout
               </button>
             </div>
-          </div>
         </div>
       </main>
     </div>

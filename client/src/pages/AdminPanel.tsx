@@ -34,7 +34,7 @@ const AdminPanel = () => {
 
   return (
     <div className="dashboard-layout">
-      <aside className="dashboard-sidebar" aria-label="Main navigation">
+      <aside className="dashboard-sidebar glass-bg-strong" aria-label="Main navigation">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -72,7 +72,7 @@ const AdminPanel = () => {
             <p className="text-muted mt-1">Manage users and system settings</p>
           </div>
 
-          <div className="user-menu">
+          <div className="user-menu glass-bg-strong">
             <div className="user-info">
               <span className="user-name">{user?.name}</span>
               <span className="user-role">Admin</span>
@@ -80,11 +80,11 @@ const AdminPanel = () => {
           </div>
         </header>
 
-        <div className="card">
-          <div className="card-header flex items-center justify-between">
+        <div className="glass-card">
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
             <h2 className="text-xl font-semibold">Users ({users.length})</h2>
           </div>
-          <div className="card-body p-0">
+          <div className="p-0">
             {error && (
               <div className="alert alert-error m-4" role="alert">
                 <svg className="alert-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -110,10 +110,10 @@ const AdminPanel = () => {
                 <p>No users found</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto glass-bg">
                 <table className="w-full" role="table">
                   <thead>
-                    <tr className="border-b border-border bg-bg-hover">
+                    <tr className="border-b border-white/10">
                       <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Name</th>
                       <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Email</th>
                       <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Role</th>
@@ -122,7 +122,7 @@ const AdminPanel = () => {
                   </thead>
                   <tbody>
                     {users.map((u) => (
-                      <tr key={u.id} className="border-b border-border hover:bg-bg-hover transition-colors">
+                      <tr key={u.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
                         <td className="p-4">
                           <div className="font-medium">{u.name}</div>
                           <div className="text-sm text-muted">#{u.id.slice(0, 8)}</div>
