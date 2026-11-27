@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleRoute from "./components/RoleRoute";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OAuthCallback from "./pages/OAuthCallback";
@@ -16,6 +17,9 @@ const App = () => (
   <BrowserRouter>
     <AuthProvider>
       <Routes>
+        {/* Landing Page */}
+        <Route path="/" element={<LandingPage />} />
+
         {/* Public */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
