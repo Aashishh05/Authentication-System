@@ -1,15 +1,12 @@
-import { motion } from "framer-motion";
 import { forwardRef } from "react";
 import { cn } from "../utils";
 
 const cardBaseClasses = `
-  w-full max-w-sm
-  bg-glass-bg-strong backdrop-blur-md
-  border border-glass-border-strong
-  rounded-2xl
-  shadow-glass-shadow-strong
+  bg-bg-elevated
+  border border-border
+  rounded-md
+  shadow-md
   overflow-hidden
-  position-relative
 `;
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -18,19 +15,17 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
-	({ className, hoverable = false, floating = false, children, ...props }, ref) => {
+	({ className, hoverable = false, floating = false, ...props }, ref) => {
 		const variants = [
-			hoverable && "hover:shadow-glass-shadow-xl transition-all duration-300",
+			hoverable && "hover:shadow-lg transition-shadow duration-300",
 			floating && "floating",
 		].filter(Boolean).join(" ");
 
 		return (
-			<motion.div
+			<div
 				ref={ref}
 				className={cn(cardBaseClasses, variants, className)}
 				{...props}
-				whileHover={hoverable ? { y: -4, shadowColor: "rgba(0, 0, 0, 0.15)" } : undefined}
-				whileTap={{ scale: 0.99 }}
 			/>
 		);
 	},

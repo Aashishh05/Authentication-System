@@ -1,48 +1,43 @@
-import { motion } from "framer-motion";
 import { forwardRef } from "react";
 import { cn } from "../utils";
 
 const buttonBaseClasses = `
   inline-flex items-center justify-center gap-2
-  font-medium rounded-lg transition-all duration-200
-  focus:outline-none focus:ring-2 focus:ring-offset-2
-  disabled:opacity-50 disabled:cursor-not-allowed
+  font-medium transition-all duration-200
   relative overflow-hidden
+  disabled:opacity-50 disabled:cursor-not-allowed
+  active:scale-[0.97]
 `;
 
 const buttonClasses = {
   primary: `
-    bg-gradient-to-r from-[#2563eb] to-[#7c3aed]
-    text-white
-    shadow-lg shadow-[#2563eb]/20
-    hover:shadow-xl hover:shadow-[#2563eb]/30
+    bg-gradient-to-r from-[var(--gradient-primary)] to-[var(--accent-hover)]
+    text-[var(--text-inverse)]
+    shadow-md hover:shadow-lg
   `,
   secondary: `
-    bg-white/10 backdrop-blur-md
-    border border-white/20
-    text-slate-200
-    hover:bg-white/15
-    hover:border-white/30
-    shadow-md shadow-black/5
+    bg-[var(--bg-elevated)]
+    text-[var(--text-primary)]
+    border border-[var(--border)]
+    shadow-sm hover:shadow-md
+    hover:bg-[var(--bg-hover)] hover:border-[var(--text-muted)]
   `,
   ghost: `
     bg-transparent
-    text-slate-300
-    hover:bg-white/5
-    hover:text-white
+    text-[var(--text-secondary)]
+    hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]
   `,
   danger: `
-    bg-red-500/20
-    border border-red-500/30
-    text-red-300
-    hover:bg-red-500/30
+    bg-[var(--error)]
+    text-[var(--text-inverse)]
+    shadow-md hover:shadow-lg
+    hover:bg-[var(--error-hover)]
   `,
   glass: `
-    bg-white/10 backdrop-blur-md
-    border border-white/20
-    text-slate-200
-    hover:bg-white/15
-    shadow-md shadow-black/5
+    bg-[var(--glass-bg)]
+    text-[var(--slate-200)]
+    border border-[var(--glass-border-strong)]
+    shadow-md hover:shadow-lg hover:bg-[var(--glass-bg-strong)]
   `,
 };
 
@@ -58,31 +53,34 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const disabledOrLoading = disabled || loading;
 
     const sizeClasses = {
-      sm: "px-3 py-1.5 text-sm",
-      md: "px-5 py-2.5 text-sm",
-      lg: "px-6 py-3 text-base",
+      sm: "px-3 py-1.5 text-xs h-8",
+      md: "px-4 py-2 text-sm h-10",
+      lg: "px-6 py-3 text-base h-12",
     };
 
     return (
-      <motion.button
+      <button
         ref={ref}
-        className={cn(buttonBaseClasses, buttonClasses[variant], sizeClasses[size], className)}
+        className={cn(
+          buttonBaseClasses,
+          "rounded-md",
+          buttonClasses[variant],
+          sizeClasses[size],
+          disabledOrLoading && "cursor-not-allowed opacity-50",
+          className
+        )}
         disabled={disabledOrLoading}
         {...props}
-        whileTap={!disabledOrLoading ? { scale: 0.97 } : undefined}
       >
         {loading ? (
-          <motion.span
-            className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
-            layoutId="spinner"
-          />
+          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
         ) : null}
         <span className="flex items-center gap-2">{children}</span>
-      </motion.button>
+      </button>
     );
   }
 );
 
 Button.displayName = "Button";
 
-export { Button, buttonBaseClasses, buttonClasses };
+export { Button };

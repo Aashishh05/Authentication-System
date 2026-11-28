@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { setAccessToken } from "../api/axios";
 import { loginRequest, registerRequest, refreshRequest, logoutRequest } from "../api/auth.api";
 import type { AuthContextType, LoginPayload, RegisterPayload, Role, User } from "../types/auth";
@@ -23,7 +23,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // Initialize session on mount - use a ref to prevent double-invocation in dev
+  const initialized = useRef(false);
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
     restoreSession();
   }, [restoreSession]);
 

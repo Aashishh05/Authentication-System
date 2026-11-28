@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/axios";
 
@@ -25,16 +26,16 @@ const AdminPanel = () => {
 
   const getRoleBadge = (role: string) => {
     const styles: Record<string, string> = {
-      admin: "bg-primary-light text-primary",
-      moderator: "bg-warning-light text-warning",
-      user: "bg-secondary-light text-secondary",
+      admin: "badge-primary",
+      moderator: "badge-warning",
+      user: "badge-neutral",
     };
-    return styles[role] || "bg-secondary-light text-secondary";
+    return styles[role] || "badge-neutral";
   };
 
   return (
     <div className="dashboard-layout">
-      <aside className="dashboard-sidebar glass-bg-strong" aria-label="Main navigation">
+      <aside className="dashboard-sidebar" aria-label="Main navigation">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 rounded-lg bg-primary-light flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -43,36 +44,37 @@ const AdminPanel = () => {
               <line x1="6" y1="12" x2="18" y2="12" />
             </svg>
           </div>
-          <span className="font-semibold text-lg">Auth System</span>
+          <span className="font-semibold text-lg sr-only">Auth System</span>
+          <span className="hidden sm:inline font-semibold text-lg">Auth System</span>
         </div>
 
         <nav className="nav" aria-label="Dashboard">
-          <a href="/dashboard" className="nav-item">
+          <Link to="/dashboard" className="nav-item nav-item-hover">
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
             Dashboard
-          </a>
-          <a href="/admin" className="nav-item active">
+          </Link>
+          <Link to="/admin" className="nav-item nav-item-hover nav-item-active">
             <svg className="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="6" x2="12" y2="18" />
               <line x1="6" y1="12" x2="18" y2="12" />
             </svg>
             Admin Panel
-          </a>
+          </Link>
         </nav>
       </aside>
 
       <main className="dashboard-main" role="main">
         <header className="dashboard-header">
           <div>
-            <h1 className="dashboard-title">Admin Panel</h1>
-            <p className="text-muted mt-1">Manage users and system settings</p>
+            <h1 className="dashboard-title animate-scale-in" style={{ animationDelay: "0ms" }}>Admin Panel</h1>
+            <p className="text-muted mt-1" style={{ animationDelay: "60ms" }}>Manage users and system settings</p>
           </div>
 
-          <div className="user-menu glass-bg-strong">
+          <div className="user-menu rounded-xl px-4 py-2 border border-border bg-bg-elevated" style={{ animationDelay: "100ms" }}>
             <div className="user-info">
               <span className="user-name">{user?.name}</span>
               <span className="user-role">Admin</span>
@@ -80,11 +82,11 @@ const AdminPanel = () => {
           </div>
         </header>
 
-        <div className="glass-card">
-          <div className="flex items-center justify-between p-6 border-b border-white/10">
+        <div className="card mb-6 animate-scale-in" style={{ animationDelay: "140ms" }}>
+          <div className="card-header">
             <h2 className="text-xl font-semibold">Users ({users.length})</h2>
           </div>
-          <div className="p-0">
+          <div className="card-body p-0">
             {error && (
               <div className="alert alert-error m-4" role="alert">
                 <svg className="alert-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -96,44 +98,50 @@ const AdminPanel = () => {
 
             {loading ? (
               <div className="flex justify-center py-12">
-                <span className="spinner" style={{ width: "32px", height: "32px", borderWidth: "3px" }} aria-hidden="true"></span>
-                <span className="sr-only">Loading users...</span>
+                <div className="flex items-center gap-3">
+                  <span className="spinner" style={{ width: "32px", height: "32px", borderWidth: "3px" }} aria-hidden="true"></span>
+                  <span className="sr-only">Loading users...</span>
+                  <span className="text-muted">Loading users...</span>
+                </div>
               </div>
             ) : users.length === 0 ? (
-              <div className="text-center py-12 text-muted">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto mb-4 opacity-50" aria-hidden="true">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                <p>No users found</p>
+              <div className="empty-state">
+                <div className="empty-state-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </div>
+                <p className="empty-state-title">No users found</p>
+                <p className="text-muted">There are no users in the system yet.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto glass-bg">
-                <table className="w-full" role="table">
+              <div className="table-container">
+                <table className="table" role="table">
                   <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Name</th>
-                      <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Email</th>
-                      <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Role</th>
-                      <th className="text-left p-4 font-medium text-sm text-muted uppercase tracking-wider">Verified</th>
+                    <tr className="border-b border-border">
+                      <th className="table-th">Name</th>
+                      <th className="table-th">Email</th>
+                      <th className="table-th">Role</th>
+                      <th className="table-th">Verified</th>
                     </tr>
                   </thead>
                   <tbody>
                     {users.map((u) => (
-                      <tr key={u.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
-                        <td className="p-4">
+                      <tr key={u.id} className="table-tr">
+                        <td className="table-td">
                           <div className="font-medium">{u.name}</div>
                           <div className="text-sm text-muted">#{u.id.slice(0, 8)}</div>
                         </td>
-                        <td className="p-4">{u.email}</td>
-                        <td className="p-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadge(u.role)}`}>
+                        <td className="table-td">{u.email}</td>
+                        <td className="table-td">
+                          <span className={`badge ${getRoleBadge(u.role)}`}>
                             {u.role}
                           </span>
                         </td>
-                        <td className="p-4">
+                        <td className="table-td">
                           <span className={`inline-flex items-center gap-1 text-sm ${u.isVerified ? "text-success" : "text-warning"}`}>
                             <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                               {u.isVerified ? (
